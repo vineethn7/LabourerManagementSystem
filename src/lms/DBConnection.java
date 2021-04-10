@@ -2,7 +2,8 @@ package lms;
 
 import java.sql.*;
 
-public class DBConnection<T extends Contractor> {
+public class DBConnection{
+	
 	Connection con=null;
 	Connection startConnection() {
 		try {
@@ -21,22 +22,24 @@ public class DBConnection<T extends Contractor> {
 			System.out.println("exception raised");
 		}
 	}
-	T insert(String query,T user) {
+	<T> T insert(String query,T user, int userType) {
+		
 		try {
 			PreparedStatement ps=con.prepareStatement(query);
-			if(user.userType==1) {
-				ps.setString(1, user.getCFname());
-				ps.setString(2, user.getCLname());
-				ps.setString(3, user.getCDOB());
+			if(userType==1) {
+				
+				ps.setString(1, ((Contractor)user).getCFname());
+				ps.setString(2, ((Contractor)user).getCLname());
+				ps.setString(3, ((Contractor)user).getCDOB());
 				ps.executeUpdate();
 				ps=con.prepareStatement("SELECT Contractor_ID from contractor order by Contractor_ID desc limit 1;");
 				ResultSet rs=ps.executeQuery();
 				if(rs.next()) {
-					user.setContractor_Id(rs.getInt(1));
+					((Contractor)user).setContractor_Id(rs.getInt(1));
 				}
 				ps=con.prepareStatement("insert into cphone_directory values(?,?)");
-				ps.setInt(1, user.getContractor_Id());
-				ps.setString(2, user.getPhone_num());
+				ps.setInt(1, ((Contractor)user).getContractor_Id());
+				ps.setString(2, ((Contractor)user).getPhone_num());
 				ps.executeUpdate();
 			}
 			else {
@@ -47,7 +50,7 @@ public class DBConnection<T extends Contractor> {
 		}
 		return user;
 	}
-	T fetchCurrentUser(T user,String phone_num,int userType) {
+	<T> T fetchCurrentUser(T user,String phone_num,int userType) {
 		try {
 			
 			if(userType==1) {

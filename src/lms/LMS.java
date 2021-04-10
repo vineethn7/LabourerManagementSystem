@@ -37,13 +37,13 @@ public class LMS {
 					
 					switch (uType) {
 						case "1":
-							User<Contractor> contractor = new User<>();
-							contractor.register(1);
+							User<Contractor> contractor = new User<>(1);
+							contractor.register();
 							b=false;
 							break;
 						case "2":
-//							User<Labourer> labourer = new User<>();
-//							labourer.register(2);
+//							User<Labourer> labourer = new User<>(2);
+//							labourer.register();
 //							b=false;
 //							break;
 						case "3":
@@ -70,10 +70,9 @@ public class LMS {
 					
 					switch (uType) {
 					case "1":
-						User<Contractor> contractor=new User<>();
-						Contractor cont=contractor.login(1);
-						contractor=new User<>(cont);
-						System.out.println(cont.toString());
+						User<Contractor> contractor=new User<>(1);
+						Contractor con=contractor.login();
+						System.out.println(con.toString());
 						b=false;
 						break;
 					case "2":

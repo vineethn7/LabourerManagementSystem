@@ -3,24 +3,33 @@ package lms;
 import java.sql.*;
 import java.util.*;
 
-public class User<T extends Contractor> {
+public class User<T> {
 	// extends Labourer to be added
 	Scanner sc = new Scanner(System.in);
 	Connection con;
 	Validators validators=new Validators();
 
-	DBConnection<T> db=new DBConnection<>();
+	DBConnection db=new DBConnection();
 
 	String query;
 	T user;
-
+	int userType;
 	User() {
 		
 	}
-	User(T user){
-		this.user=user;
+	User(int userType){
+		if(userType==1) {
+			this.user=(T) new Contractor();
+		}
+		else if(userType==2) {
+			this.user=(T) new Labourer();
+		}
+		else {
+			//admin
+		}
+		this.userType=userType;
 	}
-	public void register(int userType) {
+	public void register() {
 		String fname, lname, dob;
 		String phone_num;
 		boolean v = false;
@@ -49,18 +58,17 @@ public class User<T extends Contractor> {
 			v = validators.validDate(dob);
 		} while (v == false);
 		
-		
-		if (userType == 1) {
-			// contractor
-			user = (T) new Contractor();
-			user.setCFname(fname);
-			user.setCLname(lname);
-			user.setCDOB(dob);
-			user.setPhone_num(phone_num);
+		if(userType==1)
+		{
+			
+			((Contractor) user).setCFname(fname);
+			((Contractor) user).setCLname(lname);
+			((Contractor) user).setCDOB(dob);
+			((Contractor) user).setPhone_num(phone_num);
 			con = db.startConnection();
 			
 			query = "insert into contractor(Fname,Lname,DOB) values(?,?,?)";
-			user = db.insert(query, user);
+			user = db.insert(query,user, userType);
 			
 			
 			System.out.println("User inserted to contractor table");
@@ -77,7 +85,7 @@ public class User<T extends Contractor> {
 		}
 		System.out.println("---------------------------------------------------------------");
 	}
-	public T login(int userType) {
+	public T login() {
 		String phone_num;
 		boolean v = false;
 		do {
