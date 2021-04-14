@@ -22,54 +22,5 @@ public class DBConnection{
 			System.out.println("exception raised");
 		}
 	}
-	<T> T insert(String query,T user, int userType) {
-		
-		try {
-			PreparedStatement ps=con.prepareStatement(query);
-			if(userType==1) {
-				
-				ps.setString(1, ((Contractor)user).getCFname());
-				ps.setString(2, ((Contractor)user).getCLname());
-				ps.setString(3, ((Contractor)user).getCDOB());
-				ps.executeUpdate();
-				ps=con.prepareStatement("SELECT Contractor_ID from contractor order by Contractor_ID desc limit 1;");
-				ResultSet rs=ps.executeQuery();
-				if(rs.next()) {
-					((Contractor)user).setContractor_Id(rs.getInt(1));
-				}
-				ps=con.prepareStatement("insert into cphone_directory values(?,?)");
-				ps.setInt(1, ((Contractor)user).getContractor_Id());
-				ps.setString(2, ((Contractor)user).getPhone_num());
-				ps.executeUpdate();
-			}
-			else {
-				//labour
-			}
-		} catch (SQLException e) {
-			System.out.println("exception raised");
-		}
-		return user;
-	}
-	<T> T fetchCurrentUser(T user,String phone_num,int userType) {
-		try {
-			
-			if(userType==1) {
-				PreparedStatement ps=con.prepareStatement("select Contractor_ID,Fname,Lname,DOB from contractor c, cphone_directory cp where c.Contractor_ID=cp.CID and Phone_no=?");
-				ps.setString(1, phone_num);
-				ResultSet rs=ps.executeQuery();
-				if(rs.next()) {
-					user=(T) new Contractor(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),phone_num);
-				}
-				else {
-					user=null;
-				}
-			}
-			else {
-				user=null;
-			}
-		} catch (SQLException e) {
-			System.out.println("exception raised");
-		}
-		return user;
-	}
+	
 }
